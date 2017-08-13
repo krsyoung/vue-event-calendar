@@ -139,7 +139,8 @@ export default {
 }
 </script>
 <style lang="less">
-@base-orange: #f29543;
+// @base-color: #f29543; // orange
+@base-color: #bdbdbd; // grey
 @white: #ffffff;
 @gray: #e0e0e0;
 @gray-dark: #b1b1b1;
@@ -160,7 +161,7 @@ export default {
     }
     .events-wrapper{
       width: 50%;
-      background-color: @base-orange;
+      background-color: @base-color;
       color: @white;
       padding: 40px 45px;
       position: absolute;
@@ -198,12 +199,15 @@ export default {
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 2px #c27736;
+    // box-shadow: inset 0 0 2px #c27736;
+    box-shadow: inset 0 0 2px @base-color;
+    // background-color: rgba(0, 0, 0, 0.2);
     border-radius: 5px;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background: #c27736;
+    // background: #c27736;
+    background: darken(@base-color, 20%);
   }
   .cal-wrapper{
     .cal-header{
@@ -269,7 +273,6 @@ export default {
             z-index: 3;
           }
           &.today{
-            font-color: red;
             font-weight: bold;
           }
           &.event{
@@ -277,12 +280,12 @@ export default {
           }
           &.selected-day{
             .is-event{
-              background-color: @base-orange;
+              background-color: @base-color;
             }
           }
           .is-event{
             content: '';
-            border: 1px solid @base-orange;
+            border: 1px solid @base-color;
             background-color: #fff;
             border-radius: 50%;
             width: 36px;
@@ -296,7 +299,7 @@ export default {
           }
           .is-today{
             content: '';
-            background-color: @base-orange;
+            background-color: @base-color;
             border-radius: 50%;
             opacity: .8;
             width: 12px;
@@ -327,11 +330,13 @@ export default {
       background-color: rgba(0, 0, 0, 0.2);
       border-radius: 20px;
       margin: 0 auto;
+      margin-bottom: 1rem;
       font-size: 22px;
     }
     .event-item{
       padding: 5px 20px;
-      margin-top: 15px;
+      // margin-top: 15px;
+      margin-bottom: 0.75rem;
       box-shadow: 0 3px 11px 2px rgba(0,0,0,.1);
       background-color: #fff;
       border-radius: 5px;
