@@ -1,4 +1,6 @@
-export function dateTimeFormatter (date ,format) {
+import i18n from './i18n.js'
+
+export function dateTimeFormatter (date, format) {
   // 时间格式化辅助函数 date:毫秒数 format:'yyyy-MM-dd hh:mm:ss'
   if (!date || date == "") {
     return ""
@@ -18,7 +20,9 @@ export function dateTimeFormatter (date ,format) {
 
   var map = {
     "M": date.getMonth() + 1, //月份
+    "B": i18n['en']['monthNames'][date.getMonth()],  // January
     "d": date.getDate(), //日
+    "A": i18n['en']['dayNames'][date.getDay()], // Monday
     "h": date.getHours(), //小时
     "m": date.getMinutes(), //分
     "s": date.getSeconds(), //秒
@@ -26,7 +30,7 @@ export function dateTimeFormatter (date ,format) {
     "S": date.getMilliseconds() //毫秒
   }
 
-  format = format.replace(/([yMdhmsqS])+/g, function(all, t){
+  format = format.replace(/([yMBdAhmsqS])+/g, function(all, t){
     var v = map[t]
     if(v !== undefined){
       if(all.length > 1){

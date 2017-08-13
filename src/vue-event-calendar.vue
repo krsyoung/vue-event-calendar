@@ -268,6 +268,10 @@ export default {
             position: relative;
             z-index: 3;
           }
+          &.today{
+            font-color: red;
+            font-weight: bold;
+          }
           &.event{
             cursor: pointer;
           }
