@@ -7,15 +7,23 @@
     </div>
     <div class="cal-body">
       <div class="weeks">
-        <span v-for="dayName in i18n[calendar.options.locale].dayNames" class="item">{{dayName}}</span>
+        <span
+          v-for="(dayName, dayIndex) in i18n[calendar.options.locale].dayNames"
+          class="item"
+          :key="dayIndex"
+          >
+          {{i18n[calendar.options.locale].dayNames[(dayIndex + calendar.options.weekStartOn) % 7]}}
+        </span>
       </div>
       <div class="dates" >
         <div v-for="date in dayList" class="item"
-          :class="{
+          :class="[{
             today: date.status ? (today == date.date) : false,
             event: date.status ? (date.title != undefined) : false,
             [calendar.options.className] : (date.date == selectedDay)
-          }">
+          }, ...date.customClass]"
+          :key="date.date"
+          >
           <p class="date-num"
             @click="handleChangeCurday(date)"
             :style="{color: date.title != undefined ? ((date.date == selectedDay) ? '#fff' : customColor) : 'inherit'}">
@@ -57,29 +65,43 @@ export default {
   },
   computed: {
     dayList () {
-        let firstDay = new Date(this.calendar.params.curYear + '/' + (this.calendar.params.curMonth + 1) + '/01')
-        let startTimestamp = firstDay-1000*60*60*24*firstDay.getDay()
-        let item, status, tempArr = [], tempItem
-        for (let i = 0 ; i < 42 ; i++) {
-            item = new Date(startTimestamp + i*1000*60*60*24)
-            if (this.calendar.params.curMonth === item.getMonth()) {
-              status = 1
-            } else {
-              status = 0
+      let firstDay = new Date(this.calendar.params.curYear, this.calendar.params.curMonth, 1)
+      let dayOfWeek = firstDay.getDay()
+      // 根据当前日期计算偏移量 // Calculate the offset based on the current date
+      if (this.calendar.options.weekStartOn > dayOfWeek) {
+        dayOfWeek = dayOfWeek - this.calendar.options.weekStartOn + 7
+      } else if (this.calendar.options.weekStartOn < dayOfWeek) {
+        dayOfWeek = dayOfWeek - this.calendar.options.weekStartOn
+      }
+
+      let startDate = new Date(firstDay)
+      startDate.setDate(firstDay.getDate() - dayOfWeek)
+
+      let item, status, tempArr = [], tempItem
+      for (let i = 0 ; i < 42 ; i++) {
+          item = new Date(startDate);
+          item.setDate(startDate.getDate() + i);
+
+          if (this.calendar.params.curMonth === item.getMonth()) {
+            status = 1
+          } else {
+            status = 0
+          }
+          tempItem = {
+            date: `${item.getFullYear()}/${item.getMonth()+1}/${item.getDate()}`,
+            status: status,
+            customClass: []
+          }
+          this.events.forEach((event) => {
+            if (isEqualDateStr(event.date, tempItem.date)) {
+              tempItem.title = event.title
+              tempItem.desc = event.desc || ''
+              if (event.customClass) tempItem.customClass.push(event.customClass)
             }
-            tempItem = {
-              date: `${item.getFullYear()}/${item.getMonth()+1}/${item.getDate()}`,
-              status: status
-            }
-            this.events.forEach((event) => {
-              if (isEqualDateStr(event.date, tempItem.date)) {
-                tempItem.title = event.title
-                tempItem.desc = event.desc || ''
-              }
-            })
-            tempArr.push(tempItem)
-        }
-        return tempArr
+          })
+          tempArr.push(tempItem)
+      }
+      return tempArr
     },
     today () {
       let dateObj = new Date()

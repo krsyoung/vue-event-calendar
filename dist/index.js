@@ -98,6 +98,14 @@ return /******/ (function(modules) { // webpackBootstrap
     dayEventsTitle: '全部事件',
     notHaveEvents: '没有事件'
   },
+  us: {
+    dayNames: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    format: 'MM/yyyy',
+    fullFormat: 'MM/dd/yyyy',
+    dayEventsTitle: 'All Events',
+    notHaveEvents: 'Not Have Events'
+  },
   es: {
     dayNames: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"],
     monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
@@ -145,6 +153,38 @@ return /******/ (function(modules) { // webpackBootstrap
     fullFormat: 'dd/MM/yyyy',
     dayEventsTitle: 'Tutti gli eventi',
     notHaveEvents: 'Nessun evento'
+  },
+  ru: {
+    dayNames: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+    monthNames: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+    format: 'MM/yyyy',
+    fullFormat: 'dd/MM/yyyy',
+    dayEventsTitle: 'Все события',
+    notHaveEvents: 'События отсутствуют'
+  },
+  sv: {
+    dayNames: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"],
+    monthNames: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"],
+    format: 'MM/yyyy',
+    fullFormat: 'dd/MM/yyyy',
+    dayEventsTitle: 'Alla händelser',
+    notHaveEvents: 'Inga händelser'
+  },
+  de: {
+    dayNames: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    monthNames: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    format: 'MM/yyyy',
+    fullFormat: 'dd.MM.yyyy',
+    dayEventsTitle: 'Alle Veranstaltungen',
+    notHaveEvents: 'Keine Veranstaltungen'
+  },
+  vi: {
+    dayNames: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+    monthNames: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
+    format: 'MM/yyyy',
+    fullFormat: 'dd/MM/yyyy',
+    dayEventsTitle: 'Tất cả sự kiện',
+    notHaveEvents: 'Không có sự kiện nào'
   }
 });
 
@@ -409,6 +449,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     'cal-event-item': __WEBPACK_IMPORTED_MODULE_2__cal_event_item_vue___default.a
   },
   props: {
+    title: String,
     dayEvents: {
       type: Object,
       required: true
@@ -424,6 +465,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     dayEventsTitle: function dayEventsTitle() {
+      if (this.title) return this.title;
       if (this.dayEvents.date !== 'all') {
         var tempDate = void 0;
         if (this.dayEvents.events.length !== 0) {
@@ -488,6 +530,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -517,14 +567,26 @@ var inBrowser = typeof window !== 'undefined';
   },
   computed: {
     dayList: function dayList() {
-      var firstDay = new Date(this.calendar.params.curYear + '/' + (this.calendar.params.curMonth + 1) + '/01');
-      var startTimestamp = firstDay - 1000 * 60 * 60 * 24 * firstDay.getDay();
+      var firstDay = new Date(this.calendar.params.curYear, this.calendar.params.curMonth, 1);
+      var dayOfWeek = firstDay.getDay();
+      // 根据当前日期计算偏移量 // Calculate the offset based on the current date
+      if (this.calendar.options.weekStartOn > dayOfWeek) {
+        dayOfWeek = dayOfWeek - this.calendar.options.weekStartOn + 7;
+      } else if (this.calendar.options.weekStartOn < dayOfWeek) {
+        dayOfWeek = dayOfWeek - this.calendar.options.weekStartOn;
+      }
+
+      var startDate = new Date(firstDay);
+      startDate.setDate(firstDay.getDate() - dayOfWeek);
+
       var item = void 0,
           status = void 0,
           tempArr = [],
           tempItem = void 0;
       for (var i = 0; i < 42; i++) {
-        item = new Date(startTimestamp + i * 1000 * 60 * 60 * 24);
+        item = new Date(startDate);
+        item.setDate(startDate.getDate() + i);
+
         if (this.calendar.params.curMonth === item.getMonth()) {
           status = 1;
         } else {
@@ -532,12 +594,14 @@ var inBrowser = typeof window !== 'undefined';
         }
         tempItem = {
           date: item.getFullYear() + '/' + (item.getMonth() + 1) + '/' + item.getDate(),
-          status: status
+          status: status,
+          customClass: []
         };
         this.events.forEach(function (event) {
           if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__tools_js__["a" /* isEqualDateStr */])(event.date, tempItem.date)) {
             tempItem.title = event.title;
             tempItem.desc = event.desc || '';
+            if (event.customClass) tempItem.customClass.push(event.customClass);
           }
         });
         tempArr.push(tempItem);
@@ -601,6 +665,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -624,6 +689,7 @@ var inBrowser = typeof window !== 'undefined';
   },
 
   props: {
+    title: String,
     events: {
       type: Array,
       required: true,
@@ -749,9 +815,10 @@ function install(Vue) {
   var inBrowser = typeof window !== 'undefined';
   var dateObj = new Date();
   var DEFAULT_OPTION = {
-    locale: 'zh', //en
+    locale: 'zh', // en
     color: ' #f29543',
-    className: 'selected-day'
+    className: 'selected-day',
+    weekStartOn: 0 // 0 mean sunday
   };
   var Calendar = {
     $vm: null,
@@ -950,6 +1017,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }), _vm._v(" "), _c('cal-events', {
     attrs: {
+      "title": _vm.title,
       "dayEvents": _vm.selectedDayEvents,
       "locale": _vm.calendarOptions.options.locale,
       "color": _vm.calendarOptions.options.color
@@ -988,19 +1056,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "cal-body"
   }, [_c('div', {
     staticClass: "weeks"
-  }, _vm._l((_vm.i18n[_vm.calendar.options.locale].dayNames), function(dayName) {
+  }, _vm._l((_vm.i18n[_vm.calendar.options.locale].dayNames), function(dayName, dayIndex) {
     return _c('span', {
+      key: dayIndex,
       staticClass: "item"
-    }, [_vm._v(_vm._s(dayName))])
+    }, [_vm._v("\n        " + _vm._s(_vm.i18n[_vm.calendar.options.locale].dayNames[(dayIndex + _vm.calendar.options.weekStartOn) % 7]) + "\n      ")])
   })), _vm._v(" "), _c('div', {
     staticClass: "dates"
   }, _vm._l((_vm.dayList), function(date) {
     return _c('div', {
+      key: date.date,
       staticClass: "item",
-      class: ( _obj = {
+      class: [( _obj = {
         today: date.status ? (_vm.today == date.date) : false,
-          event: date.status ? (date.title != undefined) : false
-      }, _obj[_vm.calendar.options.className] = (date.date == _vm.selectedDay), _obj )
+        event: date.status ? (date.title != undefined) : false
+      }, _obj[_vm.calendar.options.className] = (date.date == _vm.selectedDay), _obj ) ].concat( date.customClass)
     }, [_c('p', {
       staticClass: "date-num",
       style: ({

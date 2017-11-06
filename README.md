@@ -24,7 +24,7 @@
 ```javascript
 import 'vue-event-calendar/dist/style.css' //^1.1.10, CSS has been extracted as one file, so you can easily update it.
 import vueEventCalendar from 'vue-event-calendar'
-Vue.use(vueEventCalendar, {locale: 'en'}) //locale can be 'zh' , 'en' , 'es', 'pt-br', 'ja', 'ko', 'fr'
+Vue.use(vueEventCalendar, {locale: 'en'}) //locale can be 'zh' , 'en' , 'es', 'pt-br', 'ja', 'ko', 'fr', 'it', 'ru', 'de', 'vi'
 ```
 
 #### file.vue
@@ -39,29 +39,34 @@ export default {
   data () {
     return {
       demoEvents: [{
+        date: '2016/11/12', // Required
+        title: 'Foo' // Required
+      }, {
         date: '2016/12/15',
-        title: 'Foo',
-        desc: 'longlonglong description'
-      },{
-        date: '2016/11/12',
-        title: 'Bar'
+        title: 'Bar',
+        desc: 'description',
+        customClass: 'disabled highlight' // Custom classes to an calendar cell
       }]
     }
   }
 }
 </script>
 ```
-## Customization
-If you want customization event template. required Vue: ^2.1.0. Because I use new feature(Scoped Slots) of ^2.1.0
 
-#### Customization color
+## Custom date title
 
-```javascript
-//When Vue.use, you can set main color
-Vue.use(vueEventCalendar, {locale: 'en', color: '#4fc08d'})
+```vue
+<template>
+  <vue-event-calendar :title="title" :events="demoEvents" @dayChanged="handleDayChange"></vue-event-calendar>
+</template>
 ```
 
-#### Customization event template
+In most cases, the default date string is enough，but when you want a custom date title, you can give a prop ```title```.
+It is important to noticed that the title will be replaced with a static String you passed in. You need to monitor the dayChanged event and change the title by youself.
+
+## Customization event template
+If you want customization event template. required Vue: ^2.1.0. Because I use new feature(Scoped Slots) of ^2.1.0
+
 ```vue
 <template>
   <vue-event-calendar :events="demoEvents">
@@ -105,6 +110,18 @@ Can handle two Events, @day-changed and @month-changed, callback params like ```
 </template>
 ```
 
+## Options
+
+```
+  // When Vue.use, options
+  {
+    locale: 'en',
+    color: 'black', //Set main color
+    className: 'Custom className for current clicked date', // (default: 'selected-day')
+    weekStartOn: 'week Start on which day'  // Can be: 1, 2, 3, 4, 5, 6, 0 (default: 0)
+  }
+```
+
 ## API
 ```javascript
 // NextMonth
@@ -132,3 +149,7 @@ npm run build //production
 
 - Remove today background, use a small dot below the date
 - Increase the selected date style
+
+##### 1.4.0 -> 1.4.8
+
+- Add week start on

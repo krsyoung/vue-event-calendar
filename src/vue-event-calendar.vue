@@ -8,6 +8,7 @@
       @month-changed="handleMonthChanged">
     </cal-panel>
     <cal-events
+      :title="title"
       :dayEvents="selectedDayEvents"
       :locale="calendarOptions.options.locale"
       :color="calendarOptions.options.color">
@@ -37,6 +38,7 @@ export default {
     }
   },
   props: {
+    title: String,
     events: {
       type: Array,
       required: true,
@@ -198,17 +200,17 @@ export default {
     width: 8px;
     height: 8px;
   }
-  ::-webkit-scrollbar-track {
-    // box-shadow: inset 0 0 2px #c27736;
-    box-shadow: inset 0 0 2px @base-color;
-    // background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    // background: #c27736;
-    background: darken(@base-color, 20%);
-  }
+::-webkit-scrollbar-track {
+  // box-shadow: inset 0 0 2px #c27736;
+  box-shadow: inset 0 0 2px @base-color;
+  // background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  // background: #c27736;
+  background: darken(@base-color, 20%);
+}
   .cal-wrapper{
     .cal-header{
       position: relative;
@@ -318,9 +320,10 @@ export default {
   .events-wrapper{
     border-radius: 10px;
     .cal-events{
-      height: 100%;
+      height: 95%;
       overflow-y: auto;
       padding: 0 5px;
+      margin: 15px 0;
     }
     .date{
       max-width: 60%;
